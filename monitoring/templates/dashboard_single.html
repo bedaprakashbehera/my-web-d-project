@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Driver Monitoring Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #222;
+            color: #eee;
+        }
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: #333;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(2, 6, 23, 0.6);
+        }
+        h1 {
+            color: #6bc1ff;
+            margin-bottom: 2rem;
+        }
+        #status p {
+            font-size: 1.2rem;
+            margin: 1rem 0;
+        }
+        #alert {
+            color: #ff6b6b;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Driver Monitoring Dashboard</h1>
+        <div id="status">
+            <p>Face Detected: <span id="face"></span></p>
+            <p>Fatigue Counter: <span id="fatigue"></span></p>
+            <p>Last Alert: <span id="alert"></span></p>
+        </div>
+    </div>
+    <script>
+        function updateStatus() {
+            fetch('/status/')
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('face').textContent = data.face_detected ? 'Yes' : 'No';
+                    document.getElementById('fatigue').textContent = data.fatigue_counter;
+                    document.getElementById('alert').textContent = data.last_alert;
+                });
+        }
+        setInterval(updateStatus, 2000);
+        updateStatus();
+    </script>
+</body>
+</html>

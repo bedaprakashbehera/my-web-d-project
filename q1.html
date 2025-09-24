@@ -297,7 +297,7 @@
 <body>
     <div class="container">
         <header>
-            <div class="logo"><span class="dot" aria-hidden></span> Your Name</div>
+            <div class="logo"><span class="dot" aria-hidden></span> Beda Prakash Behera</div>
             <nav>
                 <a href="#projects">Projects</a>
                 <a href="#skills">Skills</a>
@@ -307,9 +307,10 @@
         </header>
 
         <main>
+
             <section class="hero">
                 <div class="card">
-                    <h1>Hi, I'm Your Name — Full-Stack Developer</h1>
+                    <h1>Hi, I'm Beda Prakash Behera — Full-Stack Developer</h1>
                     <p class="lead">Building fast, colorful and responsive web apps with HTML, CSS, JavaScript and React. I also integrate IoT systems to deliver end-to-end solutions.</p>
                     <div class="tech-badges">
                         <span class="badge">HTML</span>
@@ -321,7 +322,6 @@
                         <span class="badge">C++</span>
                         <span class="badge">IoT</span>
                     </div>
-
                     <div class="controls">
                         <input id="search" class="search" placeholder="Search projects, e.g. React" />
                         <div class="filters">
@@ -341,6 +341,19 @@
                     <div style="height:12px"></div>
                     <a class="btn" href="#contact">Apply for Internship</a>
                 </aside>
+            </section>
+
+            <!-- Login section moved below hero for clarity and correct DOM structure -->
+            <section id="login" style="margin-top:1.6rem">
+                <h2 style="color:#fff">Login</h2>
+                <div class="card">
+                    <form id="loginForm" novalidate autocomplete="off">
+                        <input name="username" placeholder="Username" required autocomplete="username" />
+                        <input name="password" type="password" placeholder="Password" required autocomplete="current-password" />
+                        <button type="submit">Login</button>
+                        <p id="loginMsg" aria-live="polite"></p>
+                    </form>
+                </div>
             </section>
 
             <section id="projects">
@@ -369,70 +382,38 @@
     </div>
 
     <script>
-        // ---------- Data ----------
-        const projects = [{
-            id: 1,
-            title: 'React Portfolio SPA',
-            desc: 'Single-page React portfolio with filters and resume download',
-            tags: ['web', 'fullstack'],
-            github: '#',
-            demo: '#'
-        }, {
-            id: 2,
-            title: 'Online Exam System',
-            desc: 'PHP + MySQL online exam system with admin dashboard',
-            tags: ['fullstack'],
-            github: '#',
-            demo: '#'
-        }, {
-            id: 3,
-            title: 'IoT Temp Monitor',
-            desc: 'Raspberry Pi + MQTT dashboard streaming sensor data',
-            tags: ['iot'],
-            github: '#',
-            demo: '#'
-        }, {
-            id: 4,
-            title: 'Task Manager',
-            desc: 'Vanilla JS CRUD app with LocalStorage and responsive UI',
-            tags: ['web'],
-            github: '#',
-            demo: '#'
-        }, {
-            id: 5,
-            title: 'Chat Mock',
-            desc: 'Socket-based real-time chat prototype (demo)',
-            tags: ['fullstack'],
-            github: '#',
-            demo: '#'
-        }];
-
-        // ---------- Render ----------
-        const grid = document.getElementById('project-grid');
-
-        function render(list) {
-            grid.innerHTML = list.map(p => `\n        <article class="project">\n          <div class="ribbon">${p.tags[0].toUpperCase()}</div>\n          <h4>${p.title}</h4>\n          <p>${p.desc}</p>\n          <div class="tags">${p.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>\n          <div class="links">\n            <a href="${p.github}" target="_blank" rel="noopener">Code</a>\n            <a href="${p.demo}" target="_blank" rel="noopener">Live</a>\n          </div>\n        </article>\n      `).join('');
-    }
-    render(projects);
-
-    // ---------- Search & Filters (simple + fast) ----------
-    const search = document.getElementById('search');
-    const filterBtns = document.querySelectorAll('.filters button');
-
-    search.addEventListener('input',e=>{
-      const q = e.target.value.toLowerCase();
-      render(projects.filter(p=> (p.title + p.desc + p.tags.join(' ')).toLowerCase().includes(q)));
-    });
-
-    filterBtns.forEach(b=>{
-      b.addEventListener('click', ()=>{
-        filterBtns.forEach(x=>x.classList.remove('active'));
-        b.classList.add('active');
-        const f = b.dataset.filter;
-        if(f === 'all') render(projects);
-        else render(projects.filter(p=> p.tags.includes(f)));
-      });
-    });
+                                // ---------- Login form (backend API, optimized) ----------
+                                (() => {
+                                    const loginForm = document.getElementById('loginForm');
+                                    const loginMsg = document.getElementById('loginMsg');
+                                    if (!loginForm) return;
+                                    loginForm.addEventListener('submit', async e => {
+                                        e.preventDefault();
+                                        const fd = new FormData(loginForm);
+                                        const username = fd.get('username')?.trim();
+                                        const password = fd.get('password')?.trim();
+                                        if (!username || !password) {
+                                            loginMsg.textContent = 'Please enter username and password.';
+                                            loginMsg.style.color = 'salmon';
+                                            return;
+                                        }
+                                        try {
+                                            const res = await fetch('http://localhost:5000/api/login', {
+                                                method: 'POST',
+                                                headers: { 'Content-Type': 'application/json' },
+                                                body: JSON.stringify({ username, password })
+                                            });
+                                            const data = await res.json();
+                                            loginMsg.textContent = res.ok && data.success ? `Welcome, ${data.name}!` : (data.message || 'Invalid credentials.');
+                                            loginMsg.style.color = res.ok && data.success ? 'lightgreen' : 'salmon';
+                                            if (res.ok && data.success) loginForm.reset();
+                                        } catch {
+                                            loginMsg.textContent = 'Server error. Please try again.';
+                                            loginMsg.style.color = 'salmon';
+                                        }
+                                    });
+                                })();
+                // Projects section cleared. Add your own projects below as needed.
 
     // ---------- Contact form (front-end only) ----------
     const form = document.getElementById('contactForm');
